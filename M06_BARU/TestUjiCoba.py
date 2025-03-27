@@ -1,52 +1,67 @@
+import tkinter as tk
+from tkinter import messagebox
+
+# Harga tiket berdasarkan jenis film
+HARGA_TIKET = {
+    "Animasi": 25000,
+    "Aksi": 35000,
+    "Horor": 40000
+}
+
+# Batas usia untuk menonton film
+BATAS_USIA = {
+    "Animasi": 0,
+    "Aksi": 13,
+    "Horor": 17
+}
+
+
 def pesan_tiket():
-    print("🎬 Selamat datang di Bioskop Bandaru 🎬")
+    try:
+        usia = int(entry_usia.get())
+        film = var_film.get()
+        jumlah_tiket = int(entry_tiket.get())
 
-    # Input usia pengguna
-    usia = int(input("Masukkan usia Anda: "))
+        if usia < BATAS_USIA[film]:
+            messagebox.showerror("Usia Tidak Memenuhi",
+                                 f"Anda harus berusia {BATAS_USIA[film]}+ untuk menonton {film}.")
+            return
 
-    # Pilihan film
-    print("\nPilih jenis film:")
-    print("1. Animasi (Semua Umur)")
-    print("2. Aksi (13+)")
-    print("3. Horor (17+)")
-    pilihan_film = int(input("Masukkan nomor pilihan (1-3): "))
+        # Hitung harga tiket
+        harga_tiket = HARGA_TIKET[film]
+        total_harga = harga_tiket * jumlah_tiket
 
-    # Validasi usia dan jenis film
-    if pilihan_film == 1:
-        film = "Animasi"
-    elif pilihan_film == 2 and usia >= 13:
-        film = "Aksi"
-    elif pilihan_film == 3 and usia >= 17:
-        film = "Horor"
-    else:
-        print("❌ Maaf, usia Anda tidak memenuhi syarat untuk menonton film ini.")
-        return
+        # Diskon 10% jika beli lebih dari 3 tiket
+        if jumlah_tiket > 3:
+            total_harga *= 0.9
 
-    # Input jumlah tiket
-    jumlah_tiket = int(input("\nMasukkan jumlah tiket yang ingin dibeli: "))
+        # Tampilkan hasil
+        hasil.set(f"Harga per Tiket: Rp {harga_tiket}\nTotal Harga: Rp {int(total_harga)}")
 
-    # Harga tiket berdasarkan jenis film
-    harga_tiket = 0
-    if film == "Animasi":
-        harga_tiket = 25000
-    elif film == "Aksi":
-        harga_tiket = 35000
-    elif film == "Horor":
-        harga_tiket = 40000
-
-    # Diskon jika membeli lebih dari 3 tiket
-    total_harga = harga_tiket * jumlah_tiket
-    if jumlah_tiket > 3:
-        total_harga *= 0.9  # Diskon 10%
-
-    # Cetak tiket dengan loop
-    print("\n🎟️ Tiket Anda 🎟️")
-    for i in range(jumlah_tiket):
-        print(f"Tiket {i + 1}: {film} - Rp {harga_tiket}")
-
-    print(f"\nTotal Harga: Rp {int(total_harga)}")
-    print("✅ Terima kasih telah membeli tiket di Bioskop Bandaru!")
+    except ValueError:
+        messagebox.showerror("Input Tidak Valid", "Masukkan angka yang valid!")
 
 
-# Jalankan program
-pesan_tiket()
+# GUI Setup
+root = tk.Tk()
+root.title("Pemesanan Tiket Bioskop")
+root.geometry("400x350")
+
+tk.Label(root, text="Usia Anda:").pack(pady=5)
+entry_usia = tk.Entry(root)
+entry_usia.pack()
+
+tk.Label(root, text="Pilih Jenis Film:").pack(pady=5)
+var_film = tk.StringVar(value="Animasi")
+tk.OptionMenu(root, var_film, *HARGA_TIKET.keys()).pack()
+
+tk.Label(root, text="Jumlah Tiket:").pack(pady=5)
+entry_tiket = tk.Entry(root)
+entry_tiket.pack()
+
+tk.Button(root, text="Pesan Tiket", command=pesan_tiket).pack(pady=10)
+
+hasil = tk.StringVar()
+tk.Label(root, textvariable=hasil, fg="blue").pack()
+
+root.mainloop()
