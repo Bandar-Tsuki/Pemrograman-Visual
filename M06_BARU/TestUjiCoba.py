@@ -16,11 +16,25 @@ BATAS_USIA = {
 }
 
 
+# Fungsi untuk menambah jumlah tiket
+def tambah_tiket():
+    jumlah = int(entry_tiket["text"])
+    entry_tiket["text"] = str(jumlah + 1)
+
+
+# Fungsi untuk mengurangi jumlah tiket
+def kurang_tiket():
+    jumlah = int(entry_tiket["text"])
+    if jumlah > 1:
+        entry_tiket["text"] = str(jumlah - 1)
+
+
+# Fungsi pemesanan tiket
 def pesan_tiket():
     try:
         usia = int(entry_usia.get())
         film = var_film.get()
-        jumlah_tiket = int(entry_tiket.get())
+        jumlah_tiket = int(entry_tiket["text"])
 
         if usia < BATAS_USIA[film]:
             messagebox.showerror("Usia Tidak Memenuhi",
@@ -56,8 +70,19 @@ var_film = tk.StringVar(value="Animasi")
 tk.OptionMenu(root, var_film, *HARGA_TIKET.keys()).pack()
 
 tk.Label(root, text="Jumlah Tiket:").pack(pady=5)
-entry_tiket = tk.Entry(root)
-entry_tiket.pack()
+
+# Frame untuk counter
+frame_counter = tk.Frame(root)
+frame_counter.pack()
+
+btn_kurang = tk.Button(frame_counter, text="-", command=kurang_tiket, width=3)
+btn_kurang.pack(side=tk.LEFT)
+
+entry_tiket = tk.Label(frame_counter, text="1", width=5)
+entry_tiket.pack(side=tk.LEFT)
+
+btn_tambah = tk.Button(frame_counter, text="+", command=tambah_tiket, width=3)
+btn_tambah.pack(side=tk.LEFT)
 
 tk.Button(root, text="Pesan Tiket", command=pesan_tiket).pack(pady=10)
 
